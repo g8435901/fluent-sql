@@ -8,6 +8,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -64,9 +65,13 @@ class StringCondition implements Condition {
             String left = parts[0];
             String right = parts[1];
             // 如果左侧是已知别名或表名，则直接使用
-            if (AliasComposite.has(left) || AliasComposite.findAliasByTable(left).isPresent()) {
-                String alias = AliasComposite.has(left) ? AliasComposite.get(left) : AliasComposite.findAliasByTable(left).get();
+            if (AliasComposite.has(left)) {
+                String alias = AliasComposite.get(left);
                 return alias + "." + SqlNameUtils.wrap(right);
+            }
+            Optional<String> aliasOpt = AliasComposite.findAliasByTable(left);
+            if (aliasOpt.isPresent()) {
+                return aliasOpt.get() + "." + SqlNameUtils.wrap(right);
             }
             // 否则不强加限定，按用户写法包裹右侧
             return left + "." + SqlNameUtils.wrap(right);
