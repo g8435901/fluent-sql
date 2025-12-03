@@ -502,8 +502,8 @@ final class SQLImpl extends ConcatSegment<SQLImpl> implements SQLOperations, Pre
         @Override
         @NonNull
         public Mono<DataPage<T>> page(DataPage<T> page) {
-            return count().flatMapMany(count -> {
-                        page.setTotal(count);
+            return count().defaultIfEmpty(0).flatMapMany(count -> {
+                        page.setTotal(count != null ? count : 0);
                         return SHARED_REACTIVE_OPERATIONS.select(entity.paged(page));
                     })
                     .collectList()

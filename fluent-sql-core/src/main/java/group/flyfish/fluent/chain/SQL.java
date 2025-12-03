@@ -11,8 +11,6 @@ import java.util.Objects;
 
 import static group.flyfish.fluent.chain.select.SelectComposite.composite;
 
-;
-
 /**
  * 链式查询入口
  *
